@@ -1,0 +1,12 @@
+insert into teams(id, name, homeground) values(1, 'Bengal Warriors', 'Kolkata');
+insert into teams(id, name, homeground) values(2, 'Bengaluru Bulls', 'Bengaluru');
+insert into teams(id, name, homeground) values(3, 'Dabang Delhi KC', 'Delhi');
+insert into teams(id, name, homeground) values(4, 'Gujarat Fortune Giants', 'Ahmedabad');
+insert into teams(id, name, homeground) values(5, 'Haryana Steelers', 'Sonipat');
+insert into teams(id, name, homeground) values(6, 'Jaipur Pink Panthers', 'Jaipur');
+insert into teams(id, name, homeground) values(7, 'Patna Pirates', 'Patna');
+insert into teams(id, name, homeground) values(8, 'Puneri Paltan', 'Pune');
+insert into teams(id, name, homeground) values(9, 'Tamil Thalaivas', 'Chennai');
+insert into teams(id, name, homeground) values(10, 'Telugu Titans', 'Hyderabad');
+insert into teams(id, name, homeground) values(11, 'U Mumba', 'Mumbai');
+insert into teams(id, name, homeground) values(12, 'UP Yoddha', 'Lucknow');
