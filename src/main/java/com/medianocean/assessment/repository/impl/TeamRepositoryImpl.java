@@ -44,9 +44,10 @@ public class TeamRepositoryImpl implements TeamRepository {
 	}
 
 	@Override
-	public long countTeams() {
+	public int countTeams() {
 		Query query = entityManager.createQuery("Select count(t) from Team t");
-		return (long) query.getSingleResult();
+		Long teamCount = (Long) query.getSingleResult(); 
+		return teamCount.intValue();
 	}
 
 	@Override

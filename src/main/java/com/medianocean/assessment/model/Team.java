@@ -22,8 +22,14 @@ public class Team {
 	public Team() {
 
 	}
-
+	
 	public Team(String name, String homeGround) {
+		this.name = name;
+		this.homeGround = homeGround;
+	}
+	
+	public Team(int id, String name, String homeGround) {
+		this.id = id;
 		this.name = name;
 		this.homeGround = homeGround;
 	}

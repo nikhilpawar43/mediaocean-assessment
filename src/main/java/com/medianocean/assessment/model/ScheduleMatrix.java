@@ -16,7 +16,7 @@ public class ScheduleMatrix {
 		matrix = new int[totalTeams];
 	}
 	
-	public void populateTeamsInMatrix(List<Team> teams) {
+	public int[] populateTeamsInMatrix(List<Team> teams) {
 
 		logger.info("Populating team Ids inside the matrix.");
 		
@@ -25,6 +25,7 @@ public class ScheduleMatrix {
 		}
 		
 		logger.info("The initialized matrix is: {}", Arrays.toString(matrix));
+		return matrix;
 	}
 
 	public int[] getMatrix() {

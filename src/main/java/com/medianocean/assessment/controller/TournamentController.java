@@ -17,7 +17,7 @@ public class TournamentController {
 	
 	@GetMapping("generateSchedule")
 	public Matches generateSchedule() {
-		Matches matches = tournamentService.prepareMatchSchedule();
+		Matches matches = tournamentService.generateTournamentSchedule();
 		return matches;
 	}
 	

@@ -14,5 +14,5 @@ public interface TeamRepository {
 	
 	Team findById(int id);
 	
-	long countTeams();
+	int countTeams();
 }

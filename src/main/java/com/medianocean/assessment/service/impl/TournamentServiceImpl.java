@@ -13,17 +13,12 @@ import com.medianocean.assessment.model.ScheduleMatrix;
 import com.medianocean.assessment.model.Team;
 import com.medianocean.assessment.repository.MatchRepository;
 import com.medianocean.assessment.repository.TeamRepository;
-import com.medianocean.assessment.service.TeamService;
 import com.medianocean.assessment.service.TournamentService;
-import com.medianocean.assessment.service.impl.RoundRobinSchedulerImpl;
 
 @Service("tournamentService")
 public class TournamentServiceImpl implements TournamentService {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-	@Autowired
-	private TeamService teamService;
 	
 	@Autowired
 	private TeamRepository teamRepository;
@@ -36,26 +31,9 @@ public class TournamentServiceImpl implements TournamentService {
 	
 	private ScheduleMatrix scheduleMatrix;
 	
-	/**
-	 *	This function performs the hard lifting. It's responsible for carrying out the following task
-	 *	1. Initialize the matrix for scheduling the team's matches as per rounds
-	 *	2. Calculate the maximum number of matches that will be played
-	 *	3. Prepare round robin schedule for teams
-	 *	4. Create a list of matches to be played
-	 *	5. return back the matches to the client. 
-	 */
-	@Override
-	public Matches prepareMatchSchedule() {
-		
-		// 1. Initialize matrix with team Ids.
-		int totalTeams = initializeScheduleMatrix();
-		
-		// 2. Calculate total matches to be played.
-		int totalMatches = roundRobinSchedulerService.calculateTotalMatchesToBePlayed(totalTeams);
-		logger.info("The total matches to be played are: {}", totalMatches);
-		
-		// 3. Prepare schedule, and persist in the match table
-		roundRobinSchedulerService.prepareSchedule(scheduleMatrix.getMatrix(), totalMatches);
+	
+	public Matches generateTournamentSchedule() {
+		prepareMatchSchedule();
 		
 		// 4. Retrieve the matches from the table and return to the user.
 		List<Match> matchList = matchRepository.findAll();
@@ -66,13 +44,36 @@ public class TournamentServiceImpl implements TournamentService {
 	}
 	
 	/**
+	 *	This function performs the hard lifting. It's responsible for carrying out the following task
+	 *	1. Initialize the matrix for scheduling the team's matches as per rounds
+	 *	2. Calculate the maximum number of matches that will be played
+	 *	3. Prepare round robin schedule for teams
+	 *	4. return back the matches to the client. 
+	 */
+	@Override
+	public List<Match> prepareMatchSchedule() {
+		
+		// 1. Initialize matrix with team Ids.
+		int[] matchScheduleMatrix = initializeScheduleMatrix();
+		
+		// 2. Calculate total matches to be played.
+		int totalMatches = roundRobinSchedulerService.calculateTotalMatchesToBePlayed(matchScheduleMatrix.length);
+		logger.info("The total matches to be played are: {}", totalMatches);
+		
+		// 3. Prepare schedule, and persist in the match table
+		List<Match> matchList = roundRobinSchedulerService.prepareSchedule(matchScheduleMatrix, totalMatches);
+		
+		return matchList;
+	}
+	
+	/**
 	 * 	This function prepares an empty array for the teams, and places the teams in the array for round robin.
 	 */
 	@Override
-	public int initializeScheduleMatrix() {
+	public int[] initializeScheduleMatrix() {
 		
-		logger.info("The total teams in the tournament are: {}", teamRepository.countTeams());
 		int totalTeams = (int) teamRepository.countTeams();
+		logger.info("The total teams in the tournament are: {}", totalTeams);
 		
 		if (totalTeams == 0)
 			throw new IllegalArgumentException("There are no teams to schedule matches !");
@@ -84,10 +85,8 @@ public class TournamentServiceImpl implements TournamentService {
 		}
 		scheduleMatrix = new ScheduleMatrix(totalTeams);
 		
-		List<Team> teams = teamService.findAll();
-		scheduleMatrix.populateTeamsInMatrix(teams);
-		
-		return teams.size();
+		List<Team> teams = teamRepository.findAll();
+		return scheduleMatrix.populateTeamsInMatrix(teams);
 	}
 	
 	/**

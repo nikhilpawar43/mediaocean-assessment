@@ -1,6 +1,8 @@
 package com.medianocean.assessment.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +12,8 @@ import org.springframework.stereotype.Service;
 import com.medianocean.assessment.model.Match;
 import com.medianocean.assessment.model.Team;
 import com.medianocean.assessment.repository.MatchRepository;
+import com.medianocean.assessment.repository.TeamRepository;
 import com.medianocean.assessment.service.MatchSchedulerService;
-import com.medianocean.assessment.service.TeamService;
 
 @Service("roundRobinSchedulerService")
 public class RoundRobinSchedulerImpl implements MatchSchedulerService {
@@ -19,13 +21,16 @@ public class RoundRobinSchedulerImpl implements MatchSchedulerService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
-	private TeamService teamService;
+	private TeamRepository teamRepository;
 	
 	@Autowired
 	private MatchRepository matchRepository;
 	
 	@Override
 	public int calculateTotalMatchesToBePlayed(int totalTeams) {
+		
+		if (totalTeams == 0)
+			throw new IllegalArgumentException("There are no teams to schedule matches !");
 		
 		int totalMatches = 0;
 		
@@ -36,17 +41,19 @@ public class RoundRobinSchedulerImpl implements MatchSchedulerService {
 	}
 
 	@Override
-	public void prepareSchedule(int[] matrix, int totalMatches) {
+	public List<Match> prepareSchedule(int[] matrix, int totalMatches) {
 		
 		int matchesScheduled = 0;
 		int day = 0;
 		boolean opponent1HomeGround = true;
 		
+		List<Match> matches = new ArrayList<>();
+		
 		// Matches scheduled team-1 home ground
 		while (matchesScheduled < totalMatches/2) {
 			
 			day = calculateMatchDay(matchesScheduled);
-			matchesScheduled += scheduleMatchesPerRound(matrix, day, opponent1HomeGround);
+			matchesScheduled += scheduleMatchesPerRound(matrix, day, opponent1HomeGround, matches);
 			
 			shuffleTeamsInMatrix(matrix);
 		}
@@ -56,13 +63,16 @@ public class RoundRobinSchedulerImpl implements MatchSchedulerService {
 		while (matchesScheduled < totalMatches) {
 			
 			day = calculateMatchDay(matchesScheduled);
-			matchesScheduled += scheduleMatchesPerRound(matrix, day, opponent1HomeGround);
+			matchesScheduled += scheduleMatchesPerRound(matrix, day, opponent1HomeGround, matches);
 			
 			shuffleTeamsInMatrix(matrix);
 		}
+		
+		return matches;
 	}
 
-	private int scheduleMatchesPerRound(int[] matrix, int day, boolean opponent1HomeGround) {
+	@Override
+	public int scheduleMatchesPerRound(int[] matrix, int day, boolean opponent1HomeGround, List<Match> matches) {
 		
 		int opponent1Pointer = 0;
 		int opponent2Pointer = matrix.length-1;
@@ -74,13 +84,13 @@ public class RoundRobinSchedulerImpl implements MatchSchedulerService {
 			String homeGround = null;
 			Match match = null;
 			
-			opponent1 = teamService.findById(matrix[opponent1Pointer]);
-			opponent2 = teamService.findById(matrix[opponent2Pointer]);
+			opponent1 = teamRepository.findById(matrix[opponent1Pointer]);
+			opponent2 = teamRepository.findById(matrix[opponent2Pointer]);
 			
 			homeGround = opponent1HomeGround ? opponent1.getHomeGround() : opponent2.getHomeGround();
 			
 			match = new Match(opponent1, opponent2, day, homeGround);
-			
+			matches.add(match);
 			matchRepository.saveMatch(match);
 			
 			opponent1Pointer++;
