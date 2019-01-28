@@ -154,8 +154,6 @@ public class RoundRobinSchedulerImplTest {
 		teams.add(new Team(6, "Jaipur Pink Panthers", "Jaipur"));
 		teams.add(new Team(7, "Patna Pirates", "Patna"));
 		teams.add(new Team(8, "Puneri Paltan", "Pune"));
-		
-		
 
 		// 2. When: Mocking/stubbing the findById() method to return selected team from arraylist. 
 		for (int i=1; i<=teams.size(); i++)

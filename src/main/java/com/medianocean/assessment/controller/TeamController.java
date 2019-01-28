@@ -22,19 +22,19 @@ public class TeamController {
 	private TeamService teamService;
 	
 	@PostMapping("addTeam")
-	public ResponseEntity<Team> addTeam(@RequestBody Team team) {
-		Team returnedTeam = teamService.addTeam(team);
-		return new ResponseEntity<>(returnedTeam, HttpStatus.ACCEPTED); 
+	public ResponseEntity<String> addTeam(@RequestBody Team team) {
+		teamService.addTeam(team);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
 	@PostMapping("addTeams")
 	public ResponseEntity<String> addTeams(@RequestBody List<Team> teams) {
 		teamService.addTeams(teams);
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
 	@GetMapping("getTeams")
-	public List<Team> getTeams() {
+	public List<Team> findAll() {
 		return teamService.findAll();
 	}
 }

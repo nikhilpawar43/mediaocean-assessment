@@ -36,36 +36,6 @@ public class TournamentServiceImplTest {
 	private TournamentService tournamentService = new TournamentServiceImpl();
 	
 	@Test
-	public void prepareMatchSchedule_positiveTest_createMatchScheduleWith8Teams() {
-		
-		// 1. Given: List of 8 teams to initialize the schedule matrix.
-		List<Team> teams = new ArrayList<>();
-		
-		teams.add(new Team(1, "Bengal Warriors", "Kolkata"));
-		teams.add(new Team(2, "Bengaluru Bulls", "Bengaluru"));
-		teams.add(new Team(3, "Dabang Delhi KC", "Delhi"));
-		teams.add(new Team(4, "Gujarat Fortune Giants", "Ahmedabad"));
-		teams.add(new Team(5, "Haryana Steelers", "Sonipat"));
-		teams.add(new Team(6, "Jaipur Pink Panthers", "Jaipur"));
-		teams.add(new Team(7, "Patna Pirates", "Patna"));
-		teams.add(new Team(8, "Puneri Paltan", "Pune"));
-		
-		// 2. When: Mocking/stubbing the countTeams() and findAll() methods for unit testing.
-		when(teamRepository.countTeams()).thenReturn(teams.size());
-		when(teamRepository.findAll()).thenReturn(teams);
-		// 2. When: Mocking/stubbing the findById() method to return selected team from arraylist. 
-		for (int i=1; i<=teams.size(); i++)
-			when(teamRepository.findById(i)).thenReturn(teams.get(i-1));
-		//when(roundRobinSchedulerService.calculateTotalMatchesToBePlayed(teams.size())).thenReturn(56);
-		
-		List<Match> matchList = tournamentService.prepareMatchSchedule();
-		
-		int expectedMatches = 56;
-		
-		assertEquals(expectedMatches, matchList.size());
-	}
-
-	@Test
 	public void initializeScheduleMatrix_positiveTest_With8TeamsPlayingInTheTournament() {
 		
 		// 1. Given: List of 8 teams to initialize the schedule matrix.
